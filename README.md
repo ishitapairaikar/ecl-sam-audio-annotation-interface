@@ -21,7 +21,7 @@ python app.py
 Open http://localhost:5000 in your browser.
 
 1. Enter an annotator ID (e.g., `intern_01`)
-2. Play the audio clip (click Play or press `Space`) — replay as many times as needed
+2. Play the audio clip (click Play or press `Space`) and use Pause/Resume as needed
 3. Rate all three SAM dimensions on a 1-9 scale
 4. Click Submit (or press `Enter`) to save and advance to the next clip
 
@@ -40,6 +40,7 @@ Closing the browser and reopening will resume from the last unannotated clip.
 | Key | Action |
 |-----|--------|
 | `Space` | Play / replay audio |
+| Pause/Resume button | Pause or continue playback |
 | `1`-`9` | Select rating for active dimension |
 | `Tab` | Switch active dimension |
 | `Enter` | Submit annotation |
@@ -48,7 +49,7 @@ Closing the browser and reopening will resume from the last unannotated clip.
 
 Annotations are saved as CSV files in `annotations/`, one file per annotator (e.g., `annotations/intern_01.csv`).
 
-Columns: `clip_id`, `filename`, `valence`, `arousal`, `dominance`, `timestamp`
+Columns: `clip_id`, `filename`, `valence`, `arousal`, `dominance`, `annotator`, `timestamp`
 
 ## Project Structure
 
@@ -65,3 +66,4 @@ emotion_lab/
   audio_clips/        # Place audio files here
   annotations/        # CSV output (auto-created)
 ```
+

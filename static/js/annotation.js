@@ -17,6 +17,12 @@
   const clipName = document.getElementById("clip-name");
   const audioPlayer = document.getElementById("audio-player");
   const playBtn = document.getElementById("play-btn");
+  const pauseBtn = document.getElementById("pause-btn");
+  const playbackStatus = document.getElementById("playback-status");
+  const currentTimeLabel = document.getElementById("current-time");
+  const totalTimeLabel = document.getElementById("total-time");
+  const timelineTrack = document.getElementById("timeline-track");
+  const timelineFill = document.getElementById("timeline-fill");
   const submitBtn = document.getElementById("submit-btn");
   const doneMessage = document.getElementById("done-message");
   const annotationContent = document.getElementById("annotation-content");
@@ -47,6 +53,62 @@
   playBtn.addEventListener("click", () => {
     audioPlayer.currentTime = 0;
     audioPlayer.play();
+  });
+
+  pauseBtn.addEventListener("click", () => {
+    if (audioPlayer.paused) {
+      if (audioPlayer.ended) {
+        audioPlayer.currentTime = 0;
+      }
+      audioPlayer.play();
+      return;
+    }
+    audioPlayer.pause();
+  });
+
+  audioPlayer.addEventListener("loadedmetadata", () => {
+    const duration = Number.isFinite(audioPlayer.duration) ? audioPlayer.duration : 0;
+    totalTimeLabel.textContent = `End: ${formatTime(duration)}`;
+    currentTimeLabel.textContent = formatTime(0);
+    setTimeline(0);
+    playbackStatus.textContent = "Not started";
+    pauseBtn.disabled = false;
+    pauseBtn.textContent = "Pause";
+  });
+
+  audioPlayer.addEventListener("timeupdate", () => {
+    const duration = Number.isFinite(audioPlayer.duration) ? audioPlayer.duration : 0;
+    const current = Number.isFinite(audioPlayer.currentTime) ? audioPlayer.currentTime : 0;
+    currentTimeLabel.textContent = formatTime(current);
+    setTimeline(duration > 0 ? (current / duration) * 100 : 0);
+  });
+
+  audioPlayer.addEventListener("play", () => {
+    playbackStatus.textContent = "Playing";
+    pauseBtn.textContent = "Pause";
+  });
+
+  audioPlayer.addEventListener("pause", () => {
+    if (audioPlayer.ended) return;
+    playbackStatus.textContent = audioPlayer.currentTime > 0 ? "Paused" : "Not started";
+    pauseBtn.textContent = audioPlayer.currentTime > 0 ? "Resume" : "Pause";
+  });
+
+  audioPlayer.addEventListener("ended", () => {
+    const duration = Number.isFinite(audioPlayer.duration) ? audioPlayer.duration : 0;
+    currentTimeLabel.textContent = formatTime(duration);
+    setTimeline(100);
+    playbackStatus.textContent = "Finished";
+    pauseBtn.textContent = "Resume";
+  });
+
+  timelineTrack.addEventListener("click", (e) => {
+    const duration = Number.isFinite(audioPlayer.duration) ? audioPlayer.duration : 0;
+    if (duration <= 0) return;
+
+    const rect = timelineTrack.getBoundingClientRect();
+    const ratio = Math.min(Math.max((e.clientX - rect.left) / rect.width, 0), 1);
+    audioPlayer.currentTime = ratio * duration;
   });
 
   // SAM button clicks
@@ -173,8 +235,27 @@
 
     const filename = clips[currentIndex];
     clipName.textContent = filename;
+    playbackStatus.textContent = "Not started";
+    currentTimeLabel.textContent = "0:00";
+    totalTimeLabel.textContent = "End: --:--";
+    pauseBtn.disabled = true;
+    pauseBtn.textContent = "Pause / Resume";
+    setTimeline(0);
     audioPlayer.src = `/audio/${encodeURIComponent(filename)}`;
     audioPlayer.load();
+  }
+
+  function setTimeline(percent) {
+    const safePercent = Math.min(Math.max(percent, 0), 100);
+    timelineFill.style.width = `${safePercent}%`;
+    timelineTrack.setAttribute("aria-valuenow", Math.round(safePercent).toString());
+  }
+
+  function formatTime(seconds) {
+    const safe = Math.max(0, Math.floor(seconds || 0));
+    const mins = Math.floor(safe / 60);
+    const secs = safe % 60;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
   }
 
   async function fetchJson(url) {

@@ -43,6 +43,20 @@
             <audio id="audio-player" preload="auto"></audio>
             <div class="audio-controls">
                 <button id="play-btn" class="play-button">&#9654; Play (Space)</button>
+                <button id="pause-btn" class="play-button pause-button" disabled>Pause / Resume</button>
+            </div>
+            <div class="timeline" aria-label="Audio playback timeline">
+                <div class="timeline-header">
+                    <span id="playback-status">Not started</span>
+                    <span id="current-time">0:00</span>
+                </div>
+                <div id="timeline-track" class="timeline-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                    <div id="timeline-fill" class="timeline-fill"></div>
+                </div>
+                <div class="timeline-footer">
+                    <span>Start: 0:00</span>
+                    <span id="total-time">End: --:--</span>
+                </div>
             </div>
         </div>
 
@@ -129,6 +143,7 @@
         <!-- Keyboard hints -->
         <div class="hints">
             <kbd>Space</kbd> Play/Replay &nbsp;
+            <kbd>Click</kbd> Pause/Resume button &nbsp;
             <kbd>Tab</kbd> Next dimension &nbsp;
             <kbd>1</kbd>-<kbd>9</kbd> Select rating &nbsp;
             <kbd>Enter</kbd> Submit

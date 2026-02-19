@@ -11,6 +11,9 @@ AUDIO_DIR = Path("audio_clips")
 ANNOTATIONS_DIR = Path("annotations")
 
 AUDIO_EXTENSIONS = {".wav", ".mp3", ".ogg", ".flac", ".m4a"}
+OUTPUT_FIELDS = [
+    "clip_id", "filename", "valence", "arousal", "dominance", "annotator", "timestamp"
+]
 
 
 def get_audio_files():
@@ -40,6 +43,54 @@ def get_annotated_clips(annotator_id):
         for row in reader:
             annotated.add(row["filename"])
     return annotated
+
+
+def normalize_existing_annotations(path, annotator_id):
+    """Ensure an existing CSV matches the expected output schema."""
+    if not path.exists():
+        return
+
+    with open(path, newline="") as f:
+        reader = csv.DictReader(f)
+        existing_fields = reader.fieldnames or []
+        rows = list(reader)
+
+    if existing_fields == OUTPUT_FIELDS:
+        return
+
+    normalized_rows = []
+    for row in rows:
+        filename = (row.get("filename") or "").strip()
+        if not filename:
+            continue
+
+        clip_raw = (row.get("clip_id") or "").strip()
+        try:
+            clip_num = int(clip_raw)
+        except (TypeError, ValueError):
+            clip_num = 0
+
+        ts_raw = (row.get("timestamp") or "").strip()
+        if ts_raw:
+            try:
+                ts_raw = datetime.fromisoformat(ts_raw).isoformat(timespec="seconds")
+            except ValueError:
+                pass
+
+        normalized_rows.append({
+            "clip_id": f"{clip_num:03d}" if clip_num > 0 else "000",
+            "filename": filename,
+            "valence": row.get("valence", ""),
+            "arousal": row.get("arousal", ""),
+            "dominance": row.get("dominance", ""),
+            "annotator": (row.get("annotator") or row.get("annotator_id") or annotator_id),
+            "timestamp": ts_raw,
+        })
+
+    with open(path, "w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=OUTPUT_FIELDS)
+        writer.writeheader()
+        writer.writerows(normalized_rows)
 
 
 @app.route("/")
@@ -98,28 +149,28 @@ def api_annotate():
 
     annotator_id = data["annotator_id"]
     path = get_annotations_path(annotator_id)
-    file_exists = path.exists()
 
     ANNOTATIONS_DIR.mkdir(exist_ok=True)
+    normalize_existing_annotations(path, annotator_id)
+    file_exists = path.exists()
 
     with open(path, "a", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=[
-            "clip_id", "filename", "valence", "arousal", "dominance", "timestamp"
-        ])
+        writer = csv.DictWriter(f, fieldnames=OUTPUT_FIELDS)
         if not file_exists:
             writer.writeheader()
 
         # clip_id is 1-indexed position in the sorted list
         clips = get_audio_files()
-        clip_id = clips.index(data["filename"]) + 1 if data["filename"] in clips else 0
+        clip_num = clips.index(data["filename"]) + 1 if data["filename"] in clips else 0
 
         writer.writerow({
-            "clip_id": clip_id,
+            "clip_id": f"{clip_num:03d}" if clip_num > 0 else "000",
             "filename": data["filename"],
             "valence": valence,
             "arousal": arousal,
             "dominance": dominance,
-            "timestamp": datetime.now().isoformat(),
+            "annotator": annotator_id,
+            "timestamp": datetime.now().isoformat(timespec="seconds"),
         })
 
     return jsonify({"status": "ok"})
