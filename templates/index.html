@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAM Audio Annotation Tool</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<!-- Login Screen -->
+<div id="login-screen" class="screen">
+    <div class="login-box">
+        <h1>SAM Audio Annotation</h1>
+        <p>Enter your annotator ID to begin or resume annotation.</p>
+        <form id="login-form">
+            <input type="text" id="annotator-input" placeholder="Annotator ID (e.g., intern_01)" required autofocus>
+            <button type="submit">Start</button>
+        </form>
+    </div>
+</div>
+
+<!-- Annotation Screen -->
+<div id="annotation-screen" class="screen hidden">
+    <header>
+        <h1>SAM Audio Annotation</h1>
+        <div class="header-info">
+            <span id="annotator-label"></span>
+            <span id="progress-label">Clip 0/0</span>
+        </div>
+    </header>
+
+    <!-- Done message -->
+    <div id="done-message" class="hidden">
+        <h2>All clips annotated!</h2>
+        <p>Thank you for completing the annotations.</p>
+    </div>
+
+    <div id="annotation-content">
+        <!-- Audio Player -->
+        <div class="audio-section">
+            <div class="clip-name" id="clip-name"></div>
+            <audio id="audio-player" preload="auto"></audio>
+            <div class="audio-controls">
+                <button id="play-btn" class="play-button">&#9654; Play (Space)</button>
+            </div>
+        </div>
+
+        <!-- SAM Scales -->
+        <div class="sam-scales">
+            <!-- Valence -->
+            <div class="sam-row" data-dimension="valence">
+                <div class="sam-label">
+                    <span class="dimension-name">Valence</span>
+                    <span class="anchor-labels"><span>Unhappy</span><span>Happy</span></span>
+                </div>
+                <div class="sam-figure-strip" aria-hidden="true">
+                    {% for i in range(1, 10) %}
+                    <div class="sam-figure-cell"><img src="/static/img/sam/valence_{{ i }}.svg" alt=""></div>
+                    {% endfor %}
+                </div>
+                <div class="sam-buttons">
+                    <button class="sam-btn" data-value="1">1</button>
+                    <button class="sam-btn" data-value="2">2</button>
+                    <button class="sam-btn" data-value="3">3</button>
+                    <button class="sam-btn" data-value="4">4</button>
+                    <button class="sam-btn" data-value="5">5</button>
+                    <button class="sam-btn" data-value="6">6</button>
+                    <button class="sam-btn" data-value="7">7</button>
+                    <button class="sam-btn" data-value="8">8</button>
+                    <button class="sam-btn" data-value="9">9</button>
+                </div>
+            </div>
+
+            <!-- Arousal -->
+            <div class="sam-row" data-dimension="arousal">
+                <div class="sam-label">
+                    <span class="dimension-name">Arousal</span>
+                    <span class="anchor-labels"><span>Calm</span><span>Excited</span></span>
+                </div>
+                <div class="sam-figure-strip" aria-hidden="true">
+                    {% for i in range(1, 10) %}
+                    <div class="sam-figure-cell"><img src="/static/img/sam/arousal_{{ i }}.svg" alt=""></div>
+                    {% endfor %}
+                </div>
+                <div class="sam-buttons">
+                    <button class="sam-btn" data-value="1">1</button>
+                    <button class="sam-btn" data-value="2">2</button>
+                    <button class="sam-btn" data-value="3">3</button>
+                    <button class="sam-btn" data-value="4">4</button>
+                    <button class="sam-btn" data-value="5">5</button>
+                    <button class="sam-btn" data-value="6">6</button>
+                    <button class="sam-btn" data-value="7">7</button>
+                    <button class="sam-btn" data-value="8">8</button>
+                    <button class="sam-btn" data-value="9">9</button>
+                </div>
+            </div>
+
+            <!-- Dominance -->
+            <div class="sam-row" data-dimension="dominance">
+                <div class="sam-label">
+                    <span class="dimension-name">Dominance</span>
+                    <span class="anchor-labels"><span>Controlled</span><span>In-control</span></span>
+                </div>
+                <div class="sam-figure-strip" aria-hidden="true">
+                    {% for i in range(1, 10) %}
+                    <div class="sam-figure-cell"><img src="/static/img/sam/dominance_{{ i }}.svg" alt=""></div>
+                    {% endfor %}
+                </div>
+                <div class="sam-buttons">
+                    <button class="sam-btn" data-value="1">1</button>
+                    <button class="sam-btn" data-value="2">2</button>
+                    <button class="sam-btn" data-value="3">3</button>
+                    <button class="sam-btn" data-value="4">4</button>
+                    <button class="sam-btn" data-value="5">5</button>
+                    <button class="sam-btn" data-value="6">6</button>
+                    <button class="sam-btn" data-value="7">7</button>
+                    <button class="sam-btn" data-value="8">8</button>
+                    <button class="sam-btn" data-value="9">9</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Submit -->
+        <div class="submit-section">
+            <button id="submit-btn" disabled>Submit (Enter)</button>
+        </div>
+
+        <!-- Keyboard hints -->
+        <div class="hints">
+            <kbd>Space</kbd> Play/Replay &nbsp;
+            <kbd>Tab</kbd> Next dimension &nbsp;
+            <kbd>1</kbd>-<kbd>9</kbd> Select rating &nbsp;
+            <kbd>Enter</kbd> Submit
+        </div>
+    </div>
+</div>
+
+<script src="/static/js/annotation.js"></script>
+</body>
+</html>
