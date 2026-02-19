@@ -2,7 +2,7 @@
 
 A web-based tool for annotating 5-second audio clips using the Self-Assessment Manikin (SAM) scales. Built for labeling pilot study audio segments with valence, arousal, and dominance ratings.
 
-## Setup
+## Setup (Local Python)
 
 ```sh
 pip install -r requirements.txt
@@ -19,6 +19,30 @@ python app.py
 ```
 
 Open http://localhost:5000 in your browser.
+
+## Setup (Docker)
+
+Prerequisite: install Docker Desktop.
+
+1. Clone the GitHub repo:
+
+```sh
+git clone https://github.com/ishitapairaikar/ECL_UI_tool.git
+cd ECL_UI_tool
+```
+
+2. Put audio files in `audio_clips/` (create the folder if needed).
+3. Start the app with Docker:
+
+```sh
+docker compose up --build
+```
+
+4. Open http://localhost:5000
+
+Notes:
+- `annotations/` and `audio_clips/` are mounted as volumes, so data stays on your machine.
+- Stop the app with `Ctrl+C`, then run `docker compose down` if you want to remove the container.
 
 1. Enter an annotator ID (e.g., `intern_01`)
 2. Play the audio clip (click Play or press `Space`) and use Pause/Resume as needed

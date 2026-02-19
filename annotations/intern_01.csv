@@ -1,3 +1,5 @@
 "clip_id","filename","valence","arousal","dominance","annotator","timestamp"
 "001","00eafa41-757c-47d5-9da4-1358189b4740---2026-01-27T11_00_37.749061.wav","9","9","9","intern_01","2026-02-19T16:18:30"
 "002","Ingenio Humano.m4a","9","7","6","intern_01","2026-02-19T16:18:50"
+003,Las Experiencias.m4a,9,9,9,intern_01,2026-02-19T16:49:41
+004,Organización Social.m4a,9,8,9,intern_01,2026-02-19T16:49:47

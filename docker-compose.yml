@@ -1,0 +1,11 @@
+services:
+  app:
+    build: .
+    container_name: sam-annotation-tool
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./audio_clips:/app/audio_clips
+      - ./annotations:/app/annotations
+    environment:
+      - FLASK_DEBUG=1
