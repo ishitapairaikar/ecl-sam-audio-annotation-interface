@@ -1,55 +1,70 @@
 # SAM Audio Annotation Tool
 
-A web-based tool for annotating 5-second audio clips using the Self-Assessment Manikin (SAM) scales. Built for labeling pilot study audio segments with valence, arousal, and dominance ratings.
+A web app for annotating short audio clips with Self-Assessment Manikin (SAM) ratings:
+- Valence (1-9)
+- Arousal (1-9)
+- Dominance (1-9)
 
-## Setup (Local Python)
+Each annotator's results are saved to their own CSV file in `annotations/`.
 
-```sh
-pip install -r requirements.txt
-```
-
-Place your audio files (`.wav`, `.mp3`, `.ogg`, `.flac`, `.m4a`) in the `audio_clips/` directory.
-
-## Usage
-
-Start the server:
-
-```sh
-python app.py
-```
-
-Open http://localhost:5000 in your browser.
-
-## Setup (Docker)
-
-Prerequisite: install Docker Desktop.
-
-1. Clone the GitHub repo:
+## 1) Clone the repository
 
 ```sh
 git clone https://github.com/ishitapairaikar/ECL_UI_tool.git
 cd ECL_UI_tool
 ```
 
-2. Put audio files in `audio_clips/` (create the folder if needed).
-3. Start the app with Docker:
+## 2) Add your audio files
+
+Put input audio in `audio_clips/`.
+
+Supported formats:
+- `.wav`
+- `.mp3`
+- `.ogg`
+- `.flac`
+- `.m4a`
+
+## 3) Run the app
+
+### Option A (Recommended): Docker
+
+Prerequisite: Docker Desktop installed.
 
 ```sh
 docker compose up --build
 ```
 
-4. Open http://localhost:5000
+Open: http://localhost:5000
 
 Notes:
-- `annotations/` and `audio_clips/` are mounted as volumes, so data stays on your machine.
-- Stop the app with `Ctrl+C`, then run `docker compose down` if you want to remove the container.
+- Dependencies are installed in the container, not on your machine.
+- `audio_clips/` and `annotations/` are mounted, so your data remains local.
+- Stop with `Ctrl+C`, then remove the container with:
 
-1. Enter an annotator ID (e.g., `intern_01`)
-2. Play the audio clip (click Play or press `Space`) and use Pause/Resume as needed
-3. Rate all three SAM dimensions on a 1-9 scale
-4. Click Submit (or press `Enter`) to save and advance to the next clip
+```sh
+docker compose down
+```
 
-Closing the browser and reopening will resume from the last unannotated clip.
+### Option B: Local Python
+
+Prerequisite: Python 3.10+ installed.
+
+```sh
+pip install -r requirements.txt
+python app.py
+```
+
+Open: http://localhost:5000
+
+## 4) Annotate clips
+
+1. Enter your annotator ID (example: `intern_01`).
+2. Listen to the clip (`Play` button or `Space`).
+3. Rate valence, arousal, and dominance (1-9 each).
+4. Submit (`Submit` button or `Enter`) to save and continue.
+
+Progress resumes automatically if you reopen the browser with the same annotator ID.
 
 ## SAM Dimensions
 
@@ -71,23 +86,33 @@ Closing the browser and reopening will resume from the last unannotated clip.
 
 ## Data Output
 
-Annotations are saved as CSV files in `annotations/`, one file per annotator (e.g., `annotations/intern_01.csv`).
+Annotations are saved as CSV files in `annotations/`, one file per annotator (for example, `annotations/intern_01.csv`).
 
 Columns: `clip_id`, `filename`, `valence`, `arousal`, `dominance`, `annotator`, `timestamp`
+
+## Sharing with multiple annotators
+
+1. Ask each person to clone the repo and run with Docker.
+2. Share the same `audio_clips/` set with everyone.
+3. Give each annotator a unique annotator ID.
+4. Collect each person's CSV from `annotations/` when done.
+
+If you run centrally on one machine, keep unique annotator IDs to prevent row mixing.
 
 ## Project Structure
 
 ```
-emotion_lab/
+ECL_UI_tool/
   app.py              # Flask server
   requirements.txt    # Dependencies
+  Dockerfile          # Container image definition
+  docker-compose.yml  # Local container run config
   templates/
     index.html        # Login + annotation UI
   static/
     js/annotation.js  # Client logic
     css/style.css     # Styling
-    img/sam/          # SAM figure SVGs (optional)
-  audio_clips/        # Place audio files here
+    img/sam/          # SAM figure SVGs
+  audio_clips/        # Input audio files
   annotations/        # CSV output (auto-created)
 ```
-
