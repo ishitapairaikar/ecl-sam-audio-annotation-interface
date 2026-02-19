@@ -75,6 +75,38 @@ body {
     background: #357abd;
 }
 
+.instructions-box {
+    max-width: 760px;
+    text-align: left;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.instructions-box h1,
+.instructions-box > p {
+    text-align: center;
+}
+
+.instructions-section {
+    margin-bottom: 1rem;
+}
+
+.instructions-section h2 {
+    font-size: 1rem;
+    margin-bottom: 0.35rem;
+}
+
+.instructions-section ol,
+.instructions-section ul {
+    margin-left: 1.2rem;
+    color: #555;
+    line-height: 1.35;
+}
+
+.instructions-section li {
+    margin-bottom: 0.2rem;
+}
+
 /* Annotation Screen */
 #annotation-screen {
     flex-direction: column;

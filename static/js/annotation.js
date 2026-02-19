@@ -9,9 +9,11 @@
 
   // DOM refs
   const loginScreen = document.getElementById("login-screen");
+  const instructionsScreen = document.getElementById("instructions-screen");
   const annotationScreen = document.getElementById("annotation-screen");
   const loginForm = document.getElementById("login-form");
   const annotatorInput = document.getElementById("annotator-input");
+  const continueBtn = document.getElementById("continue-btn");
   const annotatorLabel = document.getElementById("annotator-label");
   const progressLabel = document.getElementById("progress-label");
   const clipName = document.getElementById("clip-name");
@@ -32,7 +34,11 @@
     e.preventDefault();
     annotatorId = annotatorInput.value.trim();
     if (!annotatorId) return;
+    loginScreen.classList.add("hidden");
+    instructionsScreen.classList.remove("hidden");
+  });
 
+  continueBtn.addEventListener("click", async () => {
     clips = await fetchJson("/api/clips");
     if (clips.length === 0) {
       alert("No audio clips found in audio_clips/ directory.");
@@ -43,9 +49,8 @@
     currentIndex = progress.next_index;
 
     annotatorLabel.textContent = `Annotator: ${annotatorId}`;
-    loginScreen.classList.add("hidden");
+    instructionsScreen.classList.add("hidden");
     annotationScreen.classList.remove("hidden");
-
     loadClip();
   });
 
